@@ -1,0 +1,52 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    transition-duration: 500ms;
+}
+
+.btn:hover {
+    color: white; 
+}
+
+.navbar {
+    /* display: none; */
+    background-color: gray;
+}
+
+.carousel {
+
+    margin-top: 65px;
+
+}
+
+.card-img-top {
+    margin: auto;
+    height: 250px;
+    width: 220px;
+    margin-top: 10px;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: 2px 2px 4px 3px rgb(165, 165, 165);
+    transform: scale(1.01);
+    transition-duration: 500ms;
+}
+
+input::placeholder {
+    color: red;
+}
+
+.carousel-inner {
+    aspect-ratio: 14/4;
+}
+
+.icon {
+    i{
+        padding: 10px;
+    }
+}
