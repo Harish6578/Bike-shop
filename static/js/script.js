@@ -115,65 +115,110 @@ const fake_products = [
    
 ]
 
+
+// === render + cart logic ===
+
 const products_container = document.querySelector('.products');
 
-// const container = document.querySelector('.row ')
-
-// products.forEach(product => {
-//     const col = document.createElement('div')
-//     col.className = 'col-12  col-sm-6 col-md-4 col-lg-3'
-//     col.innerHTML = `
-//                 <div class="card">
-//                             <img src="assests/images/${product.img}" class="card-img-top">
-//                             <div class="card-body">
-//                                 <h5 class="card-title"> ${product.title} </h5>
-//                                 <strong>
-//                                   <p style="color: black;"> <small><span style="text-decoration: line-through; color:red">Rs:100000%</span></small><br> RS: ${product.price}</p>
-//                                   <p>(50% off)</p>
-//                                 </strong>
-//                                 <button class=" btn btn-secondary text-light">Add to cart</button>
-//                             </div>
-//                         </div>
-//     `
-//     container.appendChild(col);
-// });
-
+// render single card (note: image uses class 'product-image' not duplicate id)
 function renderCard(product) {
-
-    
-    let price_markup = (product.mrp != product.price) 
-        ?` <p>Rs. <del style="color:grey">${product.mrp}</del> ${product.price}</p> `
+    const price_markup = (product.mrp !== product.price)
+        ? ` <p>Rs. <del style="color:grey">${product.mrp}</del> ${product.price}</p> `
         : `<p>Rs. ${product.price}</p>`;
 
-    let card_design = `
-         <div class="col col-6 col-lg-2 col-md-4 col-sm-6 g-3" id="product-${product.id}">
-          <div class="card">
-      <img src="image/${product.img}" class="card-img-top w-100 bike"   id="images" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">${product.title}</h5>
-         ${price_markup}
-        
-        <button class="btn btn-primary" id="add-to-cart-${product.id}">Add to Cart</button>
+    return `
+      <div class="col col-6 col-lg-2 col-md-4 col-sm-6 g-3" id="product-${product.id}">
+        <div class="card">
+          <img src="image/${product.img}" class="card-img-top w-100 bike product-image" alt="${product.title}">
+          <div class="card-body">
+            <h5 class="card-title">${product.title}</h5>
+            ${price_markup}
+            <button class="btn btn-primary add-to-cart" data-id="${product.id}" type="button">Add to Cart</button>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
     `;
-    return card_design;
-
 }
 
 function renderProducts(products){
-    let result =""
-    for(product of products){
+    let result = "";
+    for (const product of products) {
        result += renderCard(product);
     }
     products_container.innerHTML = result;
 }
 
+// initialize
 renderProducts(fake_products);
 
-const images = document.getElementById('images');
+// ===== Cart state (persisted) =====
+const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-images.addEventListener('mouseover',()=>{
-    
-})
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function updateCartCount() {
+  const count = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+  // try to find an existing badge
+  let badge = document.getElementById('cart-count-badge');
+  if (!badge) {
+    // if you have a navbar or cart icon, append the badge there (fallback: body top-right)
+    const nav = document.querySelector('.navbar') || document.body;
+    badge = document.createElement('span');
+    badge.id = 'cart-count-badge';
+    badge.style.cssText = 'display:inline-block; min-width:22px; padding:2px 7px; background:#ff3c00; color:#fff; border-radius:12px; font-weight:600; margin-left:10px; font-size:13px;';
+    // append after navbar-brand if present
+    const brand = nav.querySelector('.navbar-brand');
+    if (brand) brand.insertAdjacentElement('afterend', badge);
+    else nav.appendChild(badge);
+  }
+  badge.textContent = count;
+}
+
+// call once on load
+updateCartCount();
+
+// ===== Event delegation for Add to Cart + image hover handling =====
+products_container.addEventListener('click', (e) => {
+  const btn = e.target.closest('.add-to-cart');
+  if (!btn) return;
+
+  const id = parseInt(btn.dataset.id, 10);
+  if (Number.isNaN(id)) return;
+
+  const product = fake_products.find(p => p.id === id);
+  if (!product) return;
+
+  // add/increment in cart
+  const existing = cart.find(ci => ci.id === id);
+  if (existing) {
+    existing.qty = (existing.qty || 1) + 1;
+  } else {
+    cart.push({ id: product.id, title: product.title, price: product.price, qty: 1 });
+  }
+
+  saveCart();
+  updateCartCount();
+
+  // small feedback on button
+  const originalText = btn.textContent;
+  btn.textContent = 'Added ✓';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }, 800);
+});
+
+// optional: image hover class toggling (if you want to animate via CSS)
+products_container.addEventListener('mouseover', (e) => {
+  if (e.target.matches('.product-image')) {
+    e.target.classList.add('product-image-hover');
+  }
+});
+products_container.addEventListener('mouseout', (e) => {
+  if (e.target.matches('.product-image')) {
+    e.target.classList.remove('product-image-hover');
+  }
+});
