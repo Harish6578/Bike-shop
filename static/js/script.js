@@ -148,7 +148,7 @@ function renderCard(product) {
     let card_design = `
          <div class="col col-6 col-lg-2 col-md-4 col-sm-6 g-3" id="product-${product.id}">
           <div class="card">
-      <img src="image/${product.img}" class="card-img-top w-100" id="images" alt="...">
+      <img src="image/${product.img}" class="card-img-top w-100 bike"   id="images" alt="...">
       <div class="card-body">
         <h5 class="card-title">${product.title}</h5>
          ${price_markup}
