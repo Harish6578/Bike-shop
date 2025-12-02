@@ -143,3 +143,10 @@ body {
 .carousel-control-next-icon {
     opacity: 0.7;
 }
+/* ✅ Center the Add to Cart Button */
+.card .btn {
+    display: block;
+    margin: 10px auto;  /* auto left–right makes it center */
+    text-align: center;
+    width: fit-content; /* optional – keeps button size clean */
+}
