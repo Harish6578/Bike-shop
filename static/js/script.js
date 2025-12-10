@@ -1,4 +1,4 @@
-// ===== PRODUCTS =====
+// =================== PRODUCT LIST ===================
 const fake_products = [
     { id: 1, title: 'RS 200', price: 184000, mrp: 184000, img: 'rs200.jpeg' },
     { id: 2, title: 'Platina', price: 119000, mrp: 115000, img: 'platina.jpeg' },
@@ -18,13 +18,15 @@ const fake_products = [
     { id: 16, title: 'Freedom 125', price: 40, mrp: 50, img: '125.avif' },
 ];
 
-// ===== PRODUCT RENDER =====
+
+// =================== PRODUCT RENDER ===================
 const products_container = document.querySelector('.products');
 
 function renderCard(product) {
-    const priceMarkup = (product.price !== product.mrp)
-        ? `<p>₹ <del style="color:grey">${product.mrp}</del> ${product.price}</p>`
-        : `<p>₹ ${product.price}</p>`;
+    const priceMarkup =
+        product.price !== product.mrp
+            ? `<p>₹ <del style="color:grey">${product.mrp}</del> ${product.price}</p>`
+            : `<p>₹ ${product.price}</p>`;
 
     return `
         <div class="col col-6 col-lg-2 col-md-4 col-sm-6 g-3">
@@ -33,7 +35,9 @@ function renderCard(product) {
                 <div class="card-body">
                     <h5 class="card-title">${product.title}</h5>
                     ${priceMarkup}
-                    <button class="btn btn-primary add-to-cart" data-id="${product.id}">Add to Cart</button>
+                    <button class="btn btn-primary add-to-cart" data-id="${product.id}">
+                        Add to Cart
+                    </button>
                 </div>
             </div>
         </div>
@@ -46,13 +50,15 @@ function renderProducts(products) {
 
 renderProducts(fake_products);
 
-// ===== CART LOGIC =====
+
+// =================== CART SYSTEM ===================
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+// UPDATE CART BADGE
 function updateCartCount() {
     const total = cart.reduce((sum, item) => sum + item.qty, 0);
 
@@ -62,47 +68,48 @@ function updateCartCount() {
         badge = document.createElement("span");
         badge.id = "cart-count-badge";
         badge.style.cssText =
-            "background:red;color:white;padding:3px 7px;border-radius:50%;margin-left:10px;font-size:13px;font-weight:600;";
+            "background:red;color:white;padding:2px 6px;border-radius:50%;font-size:12px;font-weight:600;margin-left:5px;";
 
-        const navBrand = document.querySelector(".navbar-brand");
-        if (navBrand) navBrand.after(badge);
-        else document.body.append(badge);
+        const cartIcon = document.querySelector(".nav-link .bi-cart");
+        if (cartIcon) cartIcon.after(badge);
     }
 
     badge.textContent = total;
 }
-
-// Call on page load
 updateCartCount();
 
-// ===== EVENT HANDLER =====
-products_container.addEventListener("click", (e) => {
-    const btn = e.target.closest(".add-to-cart");
-    if (!btn) return;
 
-    const id = Number(btn.dataset.id);
-    const product = fake_products.find((p) => p.id === id);
+// ADD TO CART
+function addToCart(product) {
+    const exists = cart.find(item => item.id === product.id);
 
-    let item = cart.find((x) => x.id === id);
-    if (item) {
-        item.qty += 1;
+    if (exists) {
+        exists.qty++;
     } else {
-        cart.push({ id: product.id, title: product.title, price: product.price, qty: 1 });
+        cart.push({
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            qty: 1
+        });
     }
 
     saveCart();
     updateCartCount();
+}
 
-    // button animation
-    btn.textContent = "Added ✓";
-    btn.disabled = true;
-    setTimeout(() => {
-        btn.textContent = "Add to Cart";
-        btn.disabled = false;
-    }, 800);
+
+// BUTTON CLICK EVENT
+products_container.addEventListener("click", function (e) {
+    if (e.target.classList.contains("add-to-cart")) {
+        const id = parseInt(e.target.dataset.id);
+        const product = fake_products.find(p => p.id === id);
+        addToCart(product);
+    }
 });
 
-// ===== IMAGE HOVER EFFECT =====
+
+// =================== IMAGE HOVER EFFECT ===================
 products_container.addEventListener("mouseover", (e) => {
     if (e.target.classList.contains("product-image")) {
         e.target.classList.add("product-image-hover");
@@ -114,3 +121,4 @@ products_container.addEventListener("mouseout", (e) => {
         e.target.classList.remove("product-image-hover");
     }
 });
+
