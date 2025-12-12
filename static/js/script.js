@@ -1,4 +1,4 @@
-// =================== PRODUCT LIST ===================
+// keep your fake_products and renderProducts code as-is
 const fake_products = [
     { id: 1, title: 'RS 200', price: 184000, mrp: 184000, img: 'rs200.jpeg' },
     { id: 2, title: 'Platina', price: 119000, mrp: 115000, img: 'platina.jpeg' },
@@ -18,10 +18,12 @@ const fake_products = [
     { id: 16, title: 'Freedom 125', price: 40, mrp: 50, img: '125.avif' },
 ];
 
-
-// =================== PRODUCT RENDER ===================
 const products_container = document.querySelector('.products');
+const cartItemsContainer = document.querySelector('.cart-items'); // from HTML snippet
+const cartTotalEl = document.getElementById('cart-total');
+const clearCartBtn = document.getElementById('clear-cart');
 
+// ---------- rendering product cards (your existing function) ----------
 function renderCard(product) {
     const priceMarkup =
         product.price !== product.mrp
@@ -45,20 +47,18 @@ function renderCard(product) {
 }
 
 function renderProducts(products) {
+    if (!products_container) return;
     products_container.innerHTML = products.map(renderCard).join("");
 }
-
 renderProducts(fake_products);
 
-
-// =================== CART SYSTEM ===================
+// ---------- cart storage & helpers ----------
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// UPDATE CART BADGE
 function updateCartCount() {
     const total = cart.reduce((sum, item) => sum + item.qty, 0);
 
@@ -76,10 +76,8 @@ function updateCartCount() {
 
     badge.textContent = total;
 }
-updateCartCount();
 
-
-// ADD TO CART
+// ---------- cart operations ----------
 function addToCart(product) {
     const exists = cart.find(item => item.id === product.id);
 
@@ -96,29 +94,120 @@ function addToCart(product) {
 
     saveCart();
     updateCartCount();
+    renderCart(); // update cart UI
 }
 
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    saveCart();
+    updateCartCount();
+    renderCart();
+}
 
-// BUTTON CLICK EVENT
+function decreaseQty(productId) {
+    const item = cart.find(i => i.id === productId);
+    if (!item) return;
+    if (item.qty > 1) {
+        item.qty--;
+    } else {
+        // qty is 1, remove item entirely
+        cart = cart.filter(i => i.id !== productId);
+    }
+    saveCart();
+    updateCartCount();
+    renderCart();
+}
+
+function increaseQty(productId) {
+    const item = cart.find(i => i.id === productId);
+    if (!item) return;
+    item.qty++;
+    saveCart();
+    updateCartCount();
+    renderCart();
+}
+
+function clearCart() {
+    cart = [];
+    saveCart();
+    updateCartCount();
+    renderCart();
+}
+
+// ---------- render cart UI ----------
+function renderCart() {
+    if (!cartItemsContainer) return;
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `<p>Your cart is empty.</p>`;
+        cartTotalEl.textContent = "0";
+        return;
+    }
+
+    const rows = cart.map(item => {
+        return `
+            <div class="cart-row" data-id="${item.id}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;">
+                <div style="flex:1">
+                    <strong>${item.title}</strong>
+                    <div>₹ ${item.price} x ${item.qty} = ₹ ${item.price * item.qty}</div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center">
+                    <button class="btn btn-sm btn-secondary decrease-qty" data-id="${item.id}">-</button>
+                    <span>${item.qty}</span>
+                    <button class="btn btn-sm btn-secondary increase-qty" data-id="${item.id}">+</button>
+                    <button class="btn btn-sm btn-danger remove-from-cart" data-id="${item.id}">Remove</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    cartItemsContainer.innerHTML = rows;
+
+    const totalAmount = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    cartTotalEl.textContent = totalAmount;
+}
+
+// ---------- event listeners ----------
+// product list: add to cart
 products_container.addEventListener("click", function (e) {
     if (e.target.classList.contains("add-to-cart")) {
         const id = parseInt(e.target.dataset.id);
         const product = fake_products.find(p => p.id === id);
-        addToCart(product);
+        if (product) addToCart(product);
     }
 });
 
+// cart item buttons
+cartItemsContainer && cartItemsContainer.addEventListener("click", function (e) {
+    const id = e.target.dataset.id ? parseInt(e.target.dataset.id) : null;
+    if (!id) return;
 
-// =================== IMAGE HOVER EFFECT ===================
+    if (e.target.classList.contains("remove-from-cart")) {
+        removeFromCart(id);
+    } else if (e.target.classList.contains("decrease-qty")) {
+        decreaseQty(id);
+    } else if (e.target.classList.contains("increase-qty")) {
+        increaseQty(id);
+    }
+});
+
+// clear cart
+clearCartBtn && clearCartBtn.addEventListener("click", () => {
+    clearCart();
+});
+
+// ---------- keep image hover code ----------
 products_container.addEventListener("mouseover", (e) => {
     if (e.target.classList.contains("product-image")) {
         e.target.classList.add("product-image-hover");
     }
 });
-
 products_container.addEventListener("mouseout", (e) => {
     if (e.target.classList.contains("product-image")) {
         e.target.classList.remove("product-image-hover");
     }
 });
 
+// initial render
+updateCartCount();
+renderCart();
