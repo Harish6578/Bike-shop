@@ -167,8 +167,7 @@ function renderCart() {
     cartTotalEl.textContent = totalAmount;
 }
 
-// ---------- event listeners ----------
-// product list: add to cart
+
 products_container.addEventListener("click", function (e) {
     if (e.target.classList.contains("add-to-cart")) {
         const id = parseInt(e.target.dataset.id);
@@ -177,7 +176,7 @@ products_container.addEventListener("click", function (e) {
     }
 });
 
-// cart item buttons
+
 cartItemsContainer && cartItemsContainer.addEventListener("click", function (e) {
     const id = e.target.dataset.id ? parseInt(e.target.dataset.id) : null;
     if (!id) return;
@@ -195,6 +194,7 @@ cartItemsContainer && cartItemsContainer.addEventListener("click", function (e) 
 clearCartBtn && clearCartBtn.addEventListener("click", () => {
     clearCart();
 });
+
 
 // ---------- keep image hover code ----------
 products_container.addEventListener("mouseover", (e) => {
