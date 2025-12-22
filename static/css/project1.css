@@ -11,7 +11,7 @@
 body {
     background: linear-gradient(120deg, #ece9e6, #ffffff);
     min-height: 100vh;
-    padding-bottom: 40px;
+    /* padding-bottom: 40px; */
 }
 
 /* ==========================
