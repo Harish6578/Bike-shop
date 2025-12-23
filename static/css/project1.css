@@ -1,6 +1,6 @@
-/* ==========================
-   GLOBAL RESET + BASE
-============================= */
+
+   /* GLOBAL RESET + BASE */
+
 * {
     margin: 0;
     padding: 0;
@@ -11,12 +11,11 @@
 body {
     background: linear-gradient(120deg, #ece9e6, #ffffff);
     min-height: 100vh;
-    /* padding-bottom: 40px; */
 }
 
-/* ==========================
-   NAVBAR
-============================= */
+
+   /* NAVBAR */
+
 .navbar {
     background: rgba(30, 30, 30, 0.85);
     backdrop-filter: blur(6px);
@@ -35,9 +34,9 @@ body {
     color: #00d0ff !important;
 }
 
-/* ==========================
-   CAROUSEL
-============================= */
+
+   /* CAROUSEL */
+
 .carousel {
     width: 100%;
     margin: 50px auto 30px;
@@ -68,9 +67,9 @@ body {
     opacity: 0.8;
 }
 
-/* ==========================
-   PRODUCT CARDS
-============================= */
+
+   /* PRODUCT CARDS */
+
 .card {
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.85);
@@ -111,9 +110,9 @@ body {
     color: #333;
 }
 
-/* ==========================
-   BUTTON STYLE
-============================= */
+
+   /* BUTTON STYLE */
+
 .card .btn {
     display: block;
     margin: 12px auto;
@@ -131,9 +130,9 @@ body {
     transform: translateY(-2px);
 }
 
-/* ==========================
-   CART ICON
-============================= */
+
+   /* CART ICON */
+
 .icon i {
     font-size: 22px;
     padding: 8px;
@@ -148,9 +147,9 @@ body {
     transform: rotate(10deg);
 }
 
-/* ==========================
-   RESPONSIVE DESIGN
-============================= */
+
+   /* RESPONSIVE DESIGN */
+
 @media (max-width: 768px) {
     .carousel-inner {
         height: 220px;
