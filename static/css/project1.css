@@ -147,10 +147,10 @@ body {
     transform: rotate(10deg);
 }
 
-
+/* 
    /* RESPONSIVE DESIGN */
 
-/* @media (max-width: 768px) {
+@media (max-width: 768px) {
     .carousel-inner {
         height: 220px;
     }
