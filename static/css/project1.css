@@ -147,7 +147,6 @@ body {
     transform: rotate(10deg);
 }
 
-/* 
    /* RESPONSIVE DESIGN */
 
 @media (max-width: 768px) {
@@ -174,4 +173,4 @@ body {
         padding: 6px 14px;
         font-size: 13px;
     }
-} */
+} 
